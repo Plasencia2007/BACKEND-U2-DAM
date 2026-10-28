@@ -1,0 +1,41 @@
+server:
+  port: 8080
+  # Escucha en todas las interfaces para que el emulador (10.0.2.2) y un telefono en la misma red lleguen.
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: ecoapi
+  # Base relacional: PostgreSQL local (sin Docker). Las credenciales se pueden cambiar con variables de entorno.
+  datasource:
+    url: ${ECO_DB_URL:jdbc:postgresql://localhost:5432/ecorecicla}
+    username: ${ECO_DB_USUARIO:postgres}
+    password: ${ECO_DB_CLAVE:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+ecorecicla:
+  jwt:
+    # Clave HMAC-SHA256 de 256 bits en Base64. En produccion se sobrescribe con ECO_JWT_SECRETO.
+    secreto: ${ECO_JWT_SECRETO:RWNvUmVjaWNsYS1VbmlkYWQyLURBTS1jbGF2ZS1zZWNyZXRhLWRlLTI1Ni1iaXRzLSEhIQ==}
+    vigencia-minutos: 60
+
+---
+# Perfil alternativo sin PostgreSQL (base en memoria): ./gradlew bootRun --args='--spring.profiles.active=h2'
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    url: jdbc:h2:mem:ecorecicla;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
