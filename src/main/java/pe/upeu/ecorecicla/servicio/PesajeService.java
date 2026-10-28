@@ -12,6 +12,7 @@ import pe.upeu.ecorecicla.seguridad.Privilegio;
 import pe.upeu.ecorecicla.seguridad.UsuarioAutenticado;
 import pe.upeu.ecorecicla.seguridad.UsuarioRepository;
 import pe.upeu.ecorecicla.web.dto.CorreccionPesajePeticion;
+import pe.upeu.ecorecicla.web.dto.PesajeDto;
 import pe.upeu.ecorecicla.web.dto.PesajePeticion;
 
 import java.time.LocalDate;
@@ -21,13 +22,13 @@ import java.util.Optional;
 
 /**
  * Capa que coordina las operaciones sobre pesajes y hace cumplir RN-01, RN-02 y RN-03.
- * Los controladores solo delegan aqui.
+ * Los controladores solo delegan aqui; la conversion a DTO ocurre dentro de la transaccion.
  */
 @Service
 public class PesajeService {
 
     /** Resultado de registrar: indica si se creo o si ya existia (reenvio de un pendiente). */
-    public record Registro(Pesaje pesaje, boolean creado) {
+    public record Registro(PesajeDto pesaje, boolean creado) {
     }
 
     private final PesajeRepository pesajes;
@@ -44,22 +45,24 @@ public class PesajeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Pesaje> listarPorPunto(Long puntoId, int pagina, int tamanio) {
+    public Page<PesajeDto> listarPorPunto(Long puntoId, int pagina, int tamanio) {
         if (!puntos.existsById(puntoId)) {
             throw new RecursoNoEncontradoException("No existe el punto de acopio " + puntoId);
         }
-        return pesajes.findByPuntoIdOrderByFechaHoraDescIdDesc(puntoId, Paginacion.de(pagina, tamanio));
+        return pesajes.findByPuntoIdOrderByFechaHoraDescIdDesc(puntoId, Paginacion.de(pagina, tamanio))
+                .map(PesajeDto::de);
     }
 
     @Transactional(readOnly = true)
-    public Page<Pesaje> listarPorRuta(Long rutaId, int pagina, int tamanio) {
+    public Page<PesajeDto> listarPorRuta(Long rutaId, int pagina, int tamanio) {
         rutaService.buscar(rutaId);
-        return pesajes.findByRutaIdOrderByFechaHoraDescIdDesc(rutaId, Paginacion.de(pagina, tamanio));
+        return pesajes.findByRutaIdOrderByFechaHoraDescIdDesc(rutaId, Paginacion.de(pagina, tamanio))
+                .map(PesajeDto::de);
     }
 
     @Transactional(readOnly = true)
-    public Pesaje obtener(Long id) {
-        return buscar(id);
+    public PesajeDto obtener(Long id) {
+        return PesajeDto.de(buscar(id));
     }
 
     @Transactional
@@ -68,7 +71,7 @@ public class PesajeService {
         if (peticion.claveCliente() != null && !peticion.claveCliente().isBlank()) {
             Optional<Pesaje> existente = pesajes.findByClaveCliente(peticion.claveCliente());
             if (existente.isPresent()) {
-                return new Registro(existente.get(), false);
+                return new Registro(PesajeDto.de(existente.get()), false);
             }
         }
         PuntoAcopio punto = puntos.findById(puntoId)
@@ -84,11 +87,11 @@ public class PesajeService {
         Pesaje pesaje = new Pesaje(ruta, punto, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
                 peticion.material().trim(), peticion.pesoBruto(), peticion.tara(), limpiar(peticion.observacion()),
                 usuarios.getReferenceById(usuario.id()), limpiar(peticion.claveCliente()));
-        return new Registro(pesajes.save(pesaje), true);
+        return new Registro(PesajeDto.de(pesajes.save(pesaje)), true);
     }
 
     @Transactional
-    public Pesaje corregir(Long id, CorreccionPesajePeticion peticion, UsuarioAutenticado usuario) {
+    public PesajeDto corregir(Long id, CorreccionPesajePeticion peticion, UsuarioAutenticado usuario) {
         Pesaje pesaje = buscar(id);
         if (pesaje.isAnulado()) {
             throw new ConflictoDeNegocioException("El pesaje " + id + " esta anulado y no se puede corregir");
@@ -98,7 +101,7 @@ public class PesajeService {
         exigirNetoPositivo(peticion.pesoBruto(), peticion.tara());  // RN-03
         pesaje.corregir(peticion.material().trim(), peticion.pesoBruto(), peticion.tara(),
                 limpiar(peticion.observacion()));
-        return pesaje;
+        return PesajeDto.de(pesaje);
     }
 
     /** La anulacion marca el pesaje; nunca lo elimina de la base. */

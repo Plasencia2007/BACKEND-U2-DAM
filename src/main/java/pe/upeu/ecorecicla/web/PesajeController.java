@@ -30,14 +30,14 @@ public class PesajeController {
 
     @GetMapping("/{id}")
     public PesajeDto obtener(@PathVariable Long id) {
-        return PesajeDto.de(pesajeService.obtener(id));
+        return pesajeService.obtener(id);
     }
 
     @PutMapping("/{id}")
     public PesajeDto corregir(@PathVariable Long id,
                               @Valid @RequestBody CorreccionPesajePeticion peticion,
                               @AuthenticationPrincipal UsuarioAutenticado usuario) {
-        return PesajeDto.de(pesajeService.corregir(id, peticion, usuario));
+        return pesajeService.corregir(id, peticion, usuario);
     }
 
     /** Anulacion: marca el pesaje como ANULADO y responde 204 sin cuerpo. */

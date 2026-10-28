@@ -49,7 +49,7 @@ public class RutaController {
     public Pagina<PesajeDto> pesajesDeLaRuta(@PathVariable Long id,
                                             @RequestParam(defaultValue = "0") int pagina,
                                             @RequestParam(defaultValue = "50") int tamanio) {
-        return Pagina.de(pesajeService.listarPorRuta(id, pagina, tamanio), PesajeDto::de);
+        return Pagina.de(pesajeService.listarPorRuta(id, pagina, tamanio), dto -> dto);
     }
 
     @PostMapping

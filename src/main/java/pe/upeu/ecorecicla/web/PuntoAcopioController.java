@@ -58,7 +58,7 @@ public class PuntoAcopioController {
     public Pagina<PesajeDto> pesajes(@PathVariable Long id,
                                     @RequestParam(defaultValue = "0") int pagina,
                                     @RequestParam(defaultValue = "20") int tamanio) {
-        return Pagina.de(pesajeService.listarPorPunto(id, pagina, tamanio), PesajeDto::de);
+        return Pagina.de(pesajeService.listarPorPunto(id, pagina, tamanio), dto -> dto);
     }
 
     /** 201 Created con el id definitivo y el neto calculado; 200 si la claveCliente ya se habia recibido. */
@@ -67,7 +67,7 @@ public class PuntoAcopioController {
                                                @Valid @RequestBody PesajePeticion peticion,
                                                @AuthenticationPrincipal UsuarioAutenticado usuario) {
         PesajeService.Registro registro = pesajeService.registrar(id, peticion, usuario);
-        PesajeDto dto = PesajeDto.de(registro.pesaje());
+        PesajeDto dto = registro.pesaje();
         if (!registro.creado()) {
             return ResponseEntity.ok(dto);
         }
