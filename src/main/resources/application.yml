@@ -1,0 +1,43 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: ecoapi
+  datasource:
+    # Base relacional en memoria: cada arranque recrea el esquema y carga la semilla.
+    url: jdbc:h2:mem:ecorecicla;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+ecorecicla:
+  jwt:
+    # Clave HMAC-SHA256 de al menos 256 bits. Se puede sobrescribir con la variable ECO_JWT_SECRETO.
+    secreto: ${ECO_JWT_SECRETO:RWNvUmVjaWNsYS1VbmlkYWQyLURBTS1jbGF2ZS1zZWNyZXRhLWRlLTI1Ni1iaXRzLSEhIQ==}
+    vigencia-minutos: 60
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: ${ECO_DB_URL:jdbc:postgresql://localhost:5432/ecorecicla}
+    username: ${ECO_DB_USUARIO:postgres}
+    password: ${ECO_DB_CLAVE:postgres}
