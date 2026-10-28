@@ -233,7 +233,16 @@ Solo se agrega una entrada en la matriz `DatosSemilla.MATRIZ` (o se inserta en l
 
 ---
 
-## 8. Flujo de Git
+## 8. Solicitudes de cambio (Parte II)
+
+| Rama | Solicitud | Cambio en el servicio | Prueba |
+|---|---|---|---|
+| `sc-b-plasencia` | Rol AUDITOR | Una fila en `DatosSemilla.MATRIZ` (`PUNTO_LEER`, `PESAJE_LEER`) y el usuario `auditor1`; `SecurityConfig` y los controladores no cambian | `AuditorTest` (lectura 200, escritura 403) |
+| `sc-c-plasencia` | Humedad estimada | Campo en `Pesaje`, validación 0–100 % en las peticiones, `PesajeDto` y semilla | `HumedadEstimadaTest` |
+
+Las solicitudes SC-A y SC-D solo tocan la aplicación.
+
+## 9. Flujo de Git
 
 Ramas: `main` (solo fusiones desde `develop`), `develop` (integración), `feature/*`, `fix/*`, `docs/*` y, en el examen, `sc-<letra>-<apellido>`. Todas las fusiones se hicieron con `--no-ff`. La versión evaluada se etiqueta `v1.0-unidad2`.
 
