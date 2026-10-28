@@ -182,6 +182,8 @@ La autorización **siempre** se verifica contra el privilegio (autoridad de Spri
 | `RUTA_CERRAR` | Cerrar la ruta del día | No | Sí | No |
 | `PUNTO_GESTIONAR` | Crear puntos y asignar rutas | No | No | Sí |
 
+> **SC-B (AUDITOR):** tiene `PUNTO_LEER` y `PESAJE_LEER` y ningún privilegio de escritura. Se agregó con una sola fila en `DatosSemilla.MATRIZ`; `SecurityConfig` y los controladores no cambiaron. Si el auditor no tiene ruta asignada, `GET /rutas/hoy` le devuelve la ruta planificada del día en modo consulta.
+
 > **Decisión:** la matriz del enunciado dice "PESAJE_EDITAR: solo los propios / todos". Para que esa diferencia no dependa de un `if (rol == "SUPERVISOR")`, se modeló como un privilegio adicional `PESAJE_EDITAR_TODOS`. `PesajeService` consulta `usuario.tiene(PESAJE_EDITAR_TODOS)`.
 
 **Dónde se verifica:**
@@ -226,6 +228,7 @@ Solo se agrega una entrada en la matriz `DatosSemilla.MATRIZ` (o se inserta en l
 | `operario1` | `Eco2026*` | OPERARIO |
 | `supervisor1` | `Eco2026*` | SUPERVISOR |
 | `admin` | `Eco2026*` | ADMINISTRADOR |
+| `auditor1` | `Eco2026*` | AUDITOR (solicitud SC-B: solo lectura) |
 
 - 12 puntos de acopio en 3 zonas (Norte, Centro, Sur).
 - 2 rutas de `operario1` supervisadas por `supervisor1`: la **del día, abierta, con 6 puntos** (3 pesados y 3 sin pesar → RN-04) y la **del día anterior, cerrada** (→ RN-01).
