@@ -170,6 +170,31 @@ class EcoApiIntegracionTest {
     }
 
     @Test
+    void cierreIndicaCuantosPuntosFaltanYSeCompletaCuandoNoFaltaNinguno() throws Exception {
+        String op = token("operario1");
+        String sup = token("supervisor1");
+        JsonNode ruta = rutaDelDia(op);
+        // Se pesan dos de los tres puntos pendientes (posiciones 3 y 4 de la ruta).
+        for (int i = 3; i <= 4; i++) {
+            mvc.perform(post(API + "/puntos/" + ruta.get("puntos").get(i).get("id") + "/pesajes").header("Authorization", op)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"rutaId\":" + ruta.get("id") + ",\"material\":\"Carton\",\"pesoBruto\":20,\"tara\":2}"))
+                    .andExpect(status().isCreated());
+        }
+        mvc.perform(post(API + "/rutas/" + ruta.get("id") + "/cierre").header("Authorization", sup))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("falta 1 punto")));
+        // Con el ultimo punto omitido (motivo registrado) la ruta ya puede cerrarse.
+        mvc.perform(post(API + "/rutas/" + ruta.get("id") + "/puntos/" + ruta.get("puntos").get(5).get("id") + "/omision")
+                        .header("Authorization", op).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"motivo\":\"Empresa cerrada\"}"))
+                .andExpect(status().isOk());
+        mvc.perform(post(API + "/rutas/" + ruta.get("id") + "/cierre").header("Authorization", sup))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.estado").value("CERRADA"));
+    }
+
+    @Test
     void anularMarcaSinBorrarYCierreExigeTodosLosPuntos() throws Exception {
         String sup = token("supervisor1");
         JsonNode ruta = rutaDelDia(sup);
