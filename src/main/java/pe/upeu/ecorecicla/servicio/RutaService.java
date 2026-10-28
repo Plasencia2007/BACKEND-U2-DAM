@@ -88,8 +88,9 @@ public class RutaService {
                 .filter(rp -> !atendidos.contains(rp.getPunto().getId()) && !rp.estaOmitido())
                 .count();
         if (faltantes > 0) {
-            throw new ConflictoDeNegocioException("No se puede cerrar la ruta: faltan " + faltantes
-                    + (faltantes == 1 ? " punto" : " puntos") + " sin pesaje ni motivo de omision");
+            throw new ConflictoDeNegocioException("No se puede cerrar la ruta: "
+                    + (faltantes == 1 ? "falta 1 punto" : "faltan " + faltantes + " puntos")
+                    + " sin pesaje ni motivo de omision");
         }
         ruta.cerrar();
         return aDto(ruta);
