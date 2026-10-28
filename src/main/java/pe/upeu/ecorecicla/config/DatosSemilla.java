@@ -55,6 +55,9 @@ public class DatosSemilla implements CommandLineRunner {
         MATRIZ.put("SUPERVISOR", Set.of(PUNTO_LEER, PESAJE_LEER, PESAJE_CREAR, PESAJE_EDITAR, PESAJE_EDITAR_TODOS,
                 PESAJE_ANULAR, RUTA_CERRAR));
         MATRIZ.put("ADMINISTRADOR", Set.of(PUNTO_LEER, PESAJE_LEER, PUNTO_GESTIONAR));
+        // SC-B: auditor con TODOS los privilegios de lectura y ninguno de escritura.
+        // Basta con esta fila: ni el filtro de seguridad ni los controladores preguntan por el rol.
+        MATRIZ.put("AUDITOR", Set.of(PUNTO_LEER, PESAJE_LEER));
     }
 
     private static final Map<String, String> DESCRIPCIONES = Map.of(
@@ -114,6 +117,7 @@ public class DatosSemilla implements CommandLineRunner {
         crearUsuario("operario1", "Carlos Quispe Mamani", "OPERARIO");
         crearUsuario("supervisor1", "Lucia Huaman Rojas", "SUPERVISOR");
         crearUsuario("admin", "Administrador EcoRecicla", "ADMINISTRADOR");
+        crearUsuario("auditor1", "Rosa Mendoza Paredes", "AUDITOR");
     }
 
     private void crearUsuario(String username, String nombre, String rol) {

@@ -40,9 +40,11 @@ public class RutaService {
     @Transactional(readOnly = true)
     public RutaDto rutaDelDia(UsuarioAutenticado usuario, LocalDate fecha) {
         LocalDate dia = fecha != null ? fecha : LocalDate.now();
+        // Primero la ruta asignada al usuario; si no tiene ninguna (p. ej. un auditor), la ruta planificada
+        // del dia en modo consulta. Quien llega aqui ya tiene PUNTO_LEER: lo exige SecurityConfig.
         Ruta ruta = rutas.buscarAsignadas(dia, usuario.id()).stream().findFirst()
-                .orElseThrow(() -> new RecursoNoEncontradoException(
-                        "No tiene una ruta asignada para el " + dia));
+                .or(() -> rutas.findByFechaOrderByIdAsc(dia).stream().findFirst())
+                .orElseThrow(() -> new RecursoNoEncontradoException("No hay rutas planificadas para el " + dia));
         return aDto(ruta);
     }
 

@@ -14,4 +14,7 @@ public interface RutaRepository extends JpaRepository<Ruta, Long> {
     @Query("select r from Ruta r left join r.supervisor s "
             + "where r.fecha = :fecha and (r.operario.id = :usuarioId or s.id = :usuarioId) order by r.id")
     List<Ruta> buscarAsignadas(@Param("fecha") LocalDate fecha, @Param("usuarioId") Long usuarioId);
+
+    /** Rutas planificadas para una fecha (consulta de solo lectura). */
+    List<Ruta> findByFechaOrderByIdAsc(LocalDate fecha);
 }
