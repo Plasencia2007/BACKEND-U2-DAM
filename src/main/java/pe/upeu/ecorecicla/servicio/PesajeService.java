@@ -87,6 +87,7 @@ public class PesajeService {
         Pesaje pesaje = new Pesaje(ruta, punto, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
                 peticion.material().trim(), peticion.pesoBruto(), peticion.tara(), limpiar(peticion.observacion()),
                 usuarios.getReferenceById(usuario.id()), limpiar(peticion.claveCliente()));
+        pesaje.estimarHumedad(peticion.humedadEstimada());  // SC-C
         return new Registro(PesajeDto.de(pesajes.save(pesaje)), true);
     }
 
@@ -101,6 +102,7 @@ public class PesajeService {
         exigirNetoPositivo(peticion.pesoBruto(), peticion.tara());  // RN-03
         pesaje.corregir(peticion.material().trim(), peticion.pesoBruto(), peticion.tara(),
                 limpiar(peticion.observacion()));
+        pesaje.estimarHumedad(peticion.humedadEstimada());  // SC-C
         return PesajeDto.de(pesaje);
     }
 

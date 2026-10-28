@@ -1,6 +1,7 @@
 package pe.upeu.ecorecicla.web.dto;
 
 import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -13,5 +14,7 @@ public record CorreccionPesajePeticion(
         @NotNull(message = "El peso bruto es obligatorio") @Positive(message = "El peso bruto debe ser mayor que cero")
         @DecimalMax(value = "100000", message = "El peso bruto es demasiado alto") Double pesoBruto,
         @NotNull(message = "La tara es obligatoria") @PositiveOrZero(message = "La tara no puede ser negativa") Double tara,
-        @Size(max = 250, message = "Maximo 250 caracteres") String observacion) {
+        @Size(max = 250, message = "Maximo 250 caracteres") String observacion,
+        @DecimalMin(value = "0", message = "La humedad no puede ser negativa")
+        @DecimalMax(value = "100", message = "La humedad debe estar entre 0 y 100 %") Double humedadEstimada) {
 }

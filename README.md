@@ -135,6 +135,8 @@ POST /api/v1/puntos/4/pesajes
   "estado": "REGISTRADO", "claveCliente": "6f1c...-uuid" }
 ```
 
+> **SC-C (humedad estimada):** `PesajePeticion` y `CorreccionPesajePeticion` aceptan `humedadEstimada` (opcional, de 0 a 100 %; fuera de rango responde 400 con `validationErrors.humedadEstimada`) y `PesajeDto` la devuelve. Los pesajes semilla la traen según el material.
+
 **Envoltorio de paginación** (todos los listados)
 
 ```json

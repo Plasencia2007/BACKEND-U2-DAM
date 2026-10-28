@@ -93,6 +93,7 @@ public class DatosSemilla implements CommandLineRunner {
         sembrarSeguridad();
         List<PuntoAcopio> padron = sembrarPuntos();
         sembrarRutas(padron);
+        sembrarHumedad();
         log.info("Datos semilla listos: {} usuarios, {} puntos, {} rutas, {} pesajes",
                 usuarios.count(), puntos.count(), rutas.count(), pesajes.count());
     }
@@ -140,6 +141,14 @@ public class DatosSemilla implements CommandLineRunner {
                     new PuntoAcopio("Embotelladora del Sur SAC", "Panamericana Sur km 18", "Sur", "Vidrio")));
         }
         return puntos.findAll().stream().sorted((a, b) -> a.getId().compareTo(b.getId())).toList();
+    }
+
+    /** SC-C: humedad estimada tipica de cada material para los pesajes semilla que aun no la tienen. */
+    private void sembrarHumedad() {
+        Map<String, Double> tipica = Map.of("Carton", 12.0, "Papel", 9.5, "Plastico", 3.0, "Vidrio", 1.0, "Metal", 2.0);
+        pesajes.findAll().stream()
+                .filter(p -> p.getHumedadEstimada() == null)
+                .forEach(p -> p.estimarHumedad(tipica.getOrDefault(p.getMaterial(), 5.0)));
     }
 
     private void sembrarRutas(List<PuntoAcopio> p) {
