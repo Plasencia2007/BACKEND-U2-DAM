@@ -61,6 +61,9 @@ public class Pesaje {
     @Column(length = 250)
     private String motivoAnulacion;
 
+    /** SC-C: humedad estimada del material en porcentaje (0 a 100). Opcional. */
+    private Double humedadEstimada;
+
     /** Clave unica generada por la aplicacion para que reenviar un pendiente no duplique el pesaje. */
     @Column(unique = true, length = 64)
     private String claveCliente;
@@ -91,6 +94,10 @@ public class Pesaje {
         this.observacion = observacion;
     }
 
+    public void estimarHumedad(Double porcentaje) {
+        this.humedadEstimada = porcentaje;
+    }
+
     public void anular(String motivo) {
         this.anulado = true;
         this.motivoAnulacion = motivo;
@@ -109,4 +116,5 @@ public class Pesaje {
     public boolean isAnulado() { return anulado; }
     public String getMotivoAnulacion() { return motivoAnulacion; }
     public String getClaveCliente() { return claveCliente; }
+    public Double getHumedadEstimada() { return humedadEstimada; }
 }

@@ -18,7 +18,8 @@ public record PesajeDto(
         String operario,
         String estado,
         String motivoAnulacion,
-        String claveCliente) {
+        String claveCliente,
+        Double humedadEstimada) {
 
     public static final String REGISTRADO = "REGISTRADO";
     public static final String ANULADO = "ANULADO";
@@ -27,6 +28,6 @@ public record PesajeDto(
         return new PesajeDto(p.getId(), p.getPunto().getId(), p.getRuta().getId(), p.getFechaHora(),
                 p.getMaterial(), p.getPesoBruto(), p.getTara(), p.getPesoNeto(), p.getObservacion(),
                 p.getOperario().getUsername(), p.isAnulado() ? ANULADO : REGISTRADO,
-                p.getMotivoAnulacion(), p.getClaveCliente());
+                p.getMotivoAnulacion(), p.getClaveCliente(), p.getHumedadEstimada());
     }
 }
