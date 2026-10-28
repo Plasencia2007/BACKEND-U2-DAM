@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, API + "/auth/me").authenticated()
                         // Rutas
                         .requestMatchers(HttpMethod.GET, API + "/rutas/hoy").hasAuthority(PUNTO_LEER)
+                        .requestMatchers(HttpMethod.GET, API + "/rutas/*/pesajes").hasAuthority(PESAJE_LEER)
                         .requestMatchers(HttpMethod.POST, API + "/rutas").hasAuthority(PUNTO_GESTIONAR)
                         .requestMatchers(HttpMethod.POST, API + "/rutas/*/cierre").hasAuthority(RUTA_CERRAR)
                         .requestMatchers(HttpMethod.POST, API + "/rutas/*/puntos/*/omision").hasAuthority(PESAJE_CREAR)
